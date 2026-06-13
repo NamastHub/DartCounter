@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>🏆 Compétition Fléchette 2026</title>
+
+  <style>
+    /* ============================================================
+       VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --bg:          #070d1a;
+      --card:        #0e1a2e;
+      --card2:       #111f38;
+      --border:      #1e3050;
+      --gold:        #d4a017;
+      --gold-light:  #f0c040;
+      --gold-dark:   #a07810;
+      --accent:      #1a3a6e;
+      --active:      #0f2a5a;
+      --text:        #e8eaf6;
+      --muted:       #7a8aaa;
+      --bust:        #c0392b;
+      --win:         #27ae60;
+      --finish:      #e67e22;
+      --radius:      12px;
+      --shadow:      0 4px 24px rgba(0,0,0,0.5);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    h1 { font-size: clamp(1.4rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: 0.04em; }
+    h2 { font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 700; }
+    h3 { font-size: clamp(0.9rem, 2.5vw, 1.2rem); font-weight: 600; }
+
+    /* ============================================================
+       LAYOUT WRAPPERS
+    ============================================================ */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 16px;
+      animation: fadeIn 0.35s ease;
+    }
+    .screen.active { display: flex; flex-direction: column; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .app-header {
+      text-align: center;
+      padding: 24px 0 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .app-header h1 {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .app-header .subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       CARDS
+    ============================================================ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+      min-height: 52px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.96); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #1a1000;
+    }
+    .btn-gold:hover { box-shadow: 0 0 20px rgba(212,160,23,0.4); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+    }
+    .btn-outline:hover { background: rgba(212,160,23,0.1); }
+
+    .btn-danger {
+      background: rgba(192,57,43,0.15);
+      border: 1px solid var(--bust);
+      color: #e74c3c;
+    }
+    .btn-danger:hover { background: rgba(192,57,43,0.25); }
+
+    .btn-muted {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-muted:hover { color: var(--text); border-color: var(--gold); }
+
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 10px 16px; font-size: 0.9rem; min-height: 40px; }
+
+    /* ============================================================
+       FORMS
+    ============================================================ */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+    }
+
+    .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+      transition: border-color 0.2s, background 0.2s;
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+    }
+    .radio-group input[type="radio"] { accent-color: var(--gold); width: 16px; height: 16px; }
+    .radio-group label:has(input:checked) {
+      border-color: var(--gold);
+      background: rgba(212,160,23,0.1);
+      color: var(--gold-light);
+    }
+
+    /* ============================================================
+       SETUP SCREEN
+    ============================================================ */
+    #screen-setup .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 560px) {
+      #screen-setup .setup-grid { grid-template-columns: 1fr; }
+    }
+    .setup-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+    .game-rules-info {
+      background: rgba(26,58,110,0.3);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+    .game-rules-info strong { color: var(--gold); }
+
+    /* ============================================================
+       GAME SCREEN
+    ============================================================ */
+    .scores-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .player-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .player-card.active {
+      border-color: var(--gold);
+      background: var(--active);
+      box-shadow: 0 0 30px rgba(212,160,23,0.2), inset 0 0 40px rgba(212,160,23,0.05);
+    }
+    .player-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold-dark));
+      animation: shimmer 2s infinite linear;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .player-name {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-card.active .player-name { color: var(--gold-light); }
+
+    .player-score {
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .player-card.active .player-score { color: #ffffff; }
+
+    .player-turns {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Finishing animation */
+    .player-card.can-finish {
+      animation: finishPulse 2s infinite;
+    }
+    @keyframes finishPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(230,126,34,0.2); }
+      50% { box-shadow: 0 0 30px rgba(230,126,34,0.5); border-color: var(--finish); }
+    }
+    .finish-badge {
+      display: inline-block;
+      background: var(--finish);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Turn info */
+    .turn-info {
+      text-align: center;
+      padding: 12px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .turn-info .turn-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .turn-info .turn-current {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--gold-light);
+      margin-top: 2px;
+    }
+    .turn-info .turn-player {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .turn-info .turn-player span {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Input area */
+    .input-area {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .input-area h3 {
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Arrow slots */
+    .arrows-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .arrow-slot {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 6px;
+      text-align: center;
+      min-height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .arrow-slot.filled { border-color: var(--gold); }
+    .arrow-slot .arrow-num {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .arrow-slot .arrow-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+    .arrow-slot .arrow-pts {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .arrow-slot .arrow-clear {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px;
+      line-height: 1;
+    }
+    .arrow-slot .arrow-clear:hover { color: var(--bust); }
+
+    /* Keypad */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .key {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      color: var(--text);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .key:active { transform: scale(0.93); }
+    .key:hover { background: var(--accent); border-color: var(--gold); }
+    .key.key-triple { color: #e74c3c; border-color: rgba(231,76,60,0.3); }
+    .key.key-double { color: #3498db; border-color: rgba(52,152,219,0.3); }
+    .key.key-bull { color: var(--gold-light); border-color: rgba(212,160,23,0.3); }
+    .key.key-miss { color: var(--muted); }
+    .key.key-validate {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #1a1000;
+      border: none;
+      grid-column: span 2;
+    }
+    .key.key-validate:hover { box-shadow: 0 0 16px rgba(212,160,23,0.4); }
+
+    /* Text input mode */
+    .input-text-row {
+      display: flex;
+      gap: 8px;
+    }
+    .input-mode-toggle {
+      text-align: right;
+      margin-bottom: 8px;
+    }
+    .input-mode-toggle button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .input-mode-toggle button:hover { color: var(--gold); }
+
+    /* Finish suggestions */
+    .finish-suggestions {
+      background: rgba(230,126,34,0.08);
+      border: 1px solid rgba(230,126,34,0.3);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .finish-suggestions h4 {
+      color: var(--finish);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+    .suggestion-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .suggestion-pill {
+      background: rgba(230,126,34,0.12);
+      border: 1px solid rgba(230,126,34,0.25);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 0.82rem;
+      color: var(--finish);
+      font-weight: 600;
+    }
+
+    /* Action buttons */
+    .actions-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .actions-row .btn { flex: 1; min-width: 120px; }
+
+    /* History */
+    .history-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.2s;
+    }
+    .history-header:hover { background: var(--card2); }
+    .history-header h3 { color: var(--gold); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .history-toggle-icon { color: var(--muted); font-size: 0.9rem; transition: transform 0.2s; }
+    .history-toggle-icon.open { transform: rotate(180deg); }
+
+    .history-body {
+      display: none;
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .history-body.open { display: block; }
+
+    .history-entry {
+      font-size: 0.85rem;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .history-entry:last-child { border-bottom: none; }
+    .history-entry .he-player { font-weight: 700; color: var(--text); }
+    .history-entry .he-bust { color: var(--bust); font-weight: 700; }
+    .history-entry .he-score { color: var(--gold); font-weight: 700; }
+    .history-entry .he-volley { color: var(--text); }
+
+    /* Sound toggle */
+    .sound-btn {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .sound-btn:hover { background: var(--card2); border-color: var(--gold); }
+
+    /* ============================================================
+       VICTORY SCREEN
+    ============================================================ */
+    #screen-victory {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .victory-card {
+      background: var(--card);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 32px 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 60px rgba(212,160,23,0.2);
+      animation: victoryAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes victoryAppear {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .victory-trophy { font-size: 5rem; line-height: 1; margin-bottom: 8px; }
+    .victory-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .victory-name {
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .victory-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    .victory-stat { text-align: center; }
+    .victory-stat .vs-val { font-size: 1.8rem; font-weight: 800; color: var(--gold-light); }
+    .victory-stat .vs-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .victory-message {
+      background: rgba(212,160,23,0.08);
+      border: 1px solid rgba(212,160,23,0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-style: italic;
+      color: var(--gold-light);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+    .loser-message {
+      background: rgba(192,57,43,0.08);
+      border: 1px solid rgba(192,57,43,0.2);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-style: italic;
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .victory-actions { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ============================================================
+       CONFETTI
+    ============================================================ */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ============================================================
+       BUST FLASH
+    ============================================================ */
+    .bust-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(192,57,43,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .bust-overlay.show { opacity: 1; }
+    .bust-text {
+      font-size: clamp(4rem, 15vw, 8rem);
+      font-weight: 900;
+      color: #ff4444;
+      text-shadow: 0 0 40px rgba(255,68,68,0.8);
+      letter-spacing: 0.08em;
+      animation: bustAnim 0.5s ease;
+    }
+    @keyframes bustAnim {
+      0% { transform: scale(0.5); }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* ============================================================
+       MISC UTILITIES
+    ============================================================ */
+    .text-gold { color: var(--gold); }
+    .text-muted { color: var(--muted); }
+    .mt8 { margin-top: 8px; }
+    .mt16 { margin-top: 16px; }
+
+    .resume-banner {
+      background: rgba(26,58,110,0.4);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .resume-banner strong { color: var(--gold); }
+
+    /* Responsive landscape */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .scores-row { grid-template-columns: 1fr 1fr; }
+      .player-score { font-size: clamp(2rem, 7vw, 3.5rem); }
+      .keypad { grid-template-columns: repeat(8, 1fr); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Highlight active input slot */
+    .arrow-slot.active-slot {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(212,160,23,0.3);
+    }
+
+    /* Modifier buttons (x2, x3) */
+    .modifier-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .mod-btn {
+      flex: 1;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+      text-align: center;
+      transition: all 0.15s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mod-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .mod-btn.selected-mod { background: var(--accent); border-color: var(--gold); color: var(--gold-light); }
+
+    .section-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     SOUND TOGGLE (fixed, always visible)
+============================================================ -->
+<button class="sound-btn" id="soundBtn" title="Sons" onclick="toggleSound()">🔊</button>
+
+<!-- ============================================================
+     BUST OVERLAY
+============================================================ -->
+<div class="bust-overlay" id="bustOverlay">
+  <div class="bust-text">BUST!</div>
+</div>
+
+<!-- ============================================================
+     CONFETTI CANVAS
+============================================================ -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ============================================================
+     SCREEN 1 — SETUP
+============================================================ -->
+<div class="screen" id="screen-setup">
+  <div class="container">
+    <div class="app-header">
+      <h1>🏆 Compétition Fléchette 2026</h1>
+      <div class="subtitle">Mode 301 · 2 joueurs</div>
+    </div>
+
+    <div id="resumeBanner" class="resume-banner" style="display:none">
+      <strong>⚡ Partie en cours détectée !</strong>
+      La partie précédente a été sauvegardée.
+    </div>
+
+    <div class="card">
+      <h2 class="text-gold" style="margin-bottom:18px">⚙️ Configuration de la partie</h2>
+
+      <div class="setup-grid">
+        <div class="form-group">
+          <label>Joueur 1</label>
+          <input type="text" class="form-control" id="player1Name" placeholder="Nom du joueur 1" maxlength="20" />
+        </div>
+        <div class="form-group">
+          <label>Joueur 2</label>
+          <input type="text" class="form-control" id="player2Name" placeholder="Nom du joueur 2" maxlength="20" />
+        </div>
+      </div>
+
+      <div class="setup-divider"></div>
+
+      <div class="form-group">
+        <label>Nombre de tours maximum</label>
+        <div class="radio-group">
+          <label><input type="radio" name="maxTurns" value="10" /> 10 tours</label>
+          <label><input type="radio" name="maxTurns" value="15" checked /> 15 tours</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Configuration Bullseye</label>
+        <div class="radio-group">
+          <label><input type="radio" name="bullMode" value="2550" checked /> 25 / 50 (Bull = 25, Bullseye = 50)</label>
+          <label><input type="radio" name="bullMode" value="5050" /> 50 / 50 (tout = 50)</label>
+        </div>
+      </div>
+
+      <div class="game-rules-info">
+        <strong>Règles :</strong> Mode 301 · Chaque joueur commence à 301 · 
+        Le score doit atteindre <strong>exactement 0</strong> · 
+        Si le score passe sous 0, c'est un <strong>BUST</strong> (score conservé, tour consommé) · 
+        Victoire immédiate à 0 · Si aucun joueur n'atteint 0, le plus proche gagne.
+      </div>
+
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px">
+        <button class="btn btn-gold btn-full" onclick="startGame()">🎯 Démarrer la partie</button>
+        <button class="btn btn-muted btn-full" id="resumeBtn" style="display:none" onclick="resumeGame()">⚡ Reprendre la partie sauvegardée</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN 2 — GAME
+============================================================ -->
+<div class="screen" id="screen-game">
+  <div class="container">
+    <div class="app-header" style="padding-bottom:10px">
+      <h1 style="font-size:clamp(1.1rem,3vw,1.8rem)">🏆 Compétition Fléchette 2026</h1>
+    </div>
+
+    <!-- Scores -->
+    <div class="scores-row">
+      <div class="player-card" id="pcard0">
+        <div class="player-name" id="pname0">Joueur 1</div>
+        <div class="player-score" id="pscore0">301</div>
+        <div class="player-turns" id="pturns0">Tours : 0</div>
+        <div id="pfinish0"></div>
+      </div>
+      <div class="player-card" id="pcard1">
+        <div class="player-name" id="pname1">Joueur 2</div>
+        <div class="player-score" id="pscore1">301</div>
+        <div class="player-turns" id="pturns1">Tours : 0</div>
+        <div id="pfinish1"></div>
+      </div>
+    </div>
+
+    <!-- Turn info -->
+    <div class="turn-info">
+      <div class="turn-label">Tour</div>
+      <div class="turn-current" id="turnLabel">1 / 15</div>
+      <div class="turn-player">Au joueur : <span id="turnPlayer">—</span></div>
+    </div>
+
+    <!-- Finish suggestions -->
+    <div class="finish-suggestions" id="finishSuggestions" style="display:none">
+      <h4>🎯 Finitions possibles</h4>
+      <div class="suggestion-list" id="suggestionList"></div>
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area" id="inputArea">
+      <h3>🎯 Saisie de la volée</h3>
+
+      <!-- Arrow slots -->
+      <div class="arrows-row">
+        <div class="arrow-slot active-slot" id="slot0">
+          <div class="arrow-num">Fléche 1</div>
+          <div class="arrow-val">—</div>
+          <div class="arrow-pts"></div>
+        </div>
+        <div class="arrow-slot" id="slot1">
+          <div class="arrow-num">Fléche 2</div>
+          <div class="arrow-val">—</div>
+          <div class="arrow-pts"></div>
+        </div>
+        <div class="arrow-slot" id="slot2">
+          <div class="arrow-num">Fléche 3</div>
+          <div class="arrow-val">—</div>
+          <div class="arrow-pts"></div>
+        </div>
+      </div>
+
+      <!-- Modifier -->
+      <div class="section-label">Modificateur</div>
+      <div class="modifier-row" id="modifierRow">
+        <button class="mod-btn" id="mod-1" onclick="selectModifier(1)">Simple</button>
+        <button class="mod-btn selected-mod" id="mod-2" onclick="selectModifier(2)">Double ×2</button>
+        <button class="mod-btn" id="mod-3" onclick="selectModifier(3)">Triple ×3</button>
+      </div>
+
+      <!-- Number keypad -->
+      <div class="section-label">Valeur</div>
+      <div class="keypad" id="keypad">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Miss / Bull -->
+      <div class="keypad" id="keypad2">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions-row">
+      <button class="btn btn-danger btn-sm" onclick="undoLast()">↩ Annuler dernière volée</button>
+      <button class="btn btn-muted btn-sm" onclick="exportHistory()">📄 Exporter</button>
+      <button class="btn btn-outline btn-sm" onclick="confirmNewGame()">🔄 Nouvelle partie</button>
+    </div>
+
+    <!-- History -->
+    <div class="history-section">
+      <div class="history-header" onclick="toggleHistory()">
+        <h3>📋 Historique de la partie</h3>
+        <span class="history-toggle-icon" id="histIcon">▼</span>
+      </div>
+      <div class="history-body" id="historyBody"></div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN 3 — VICTORY
+============================================================ -->
+<div class="screen" id="screen-victory">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:16px">
+    <div class="victory-card">
+      <div class="victory-trophy">🏆</div>
+      <div class="victory-title">Vainqueur de la soirée</div>
+      <div class="victory-name" id="victoryName">Kevin</div>
+      <div class="victory-stats">
+        <div class="victory-stat">
+          <div class="vs-val" id="victoryScore">0</div>
+          <div class="vs-label">Score final</div>
+        </div>
+        <div class="victory-stat">
+          <div class="vs-val" id="victoryTurns">—</div>
+          <div class="vs-label">Tours joués</div>
+        </div>
+      </div>
+      <div class="victory-message" id="victoryMsg"></div>
+      <div class="loser-message" id="loserMsg"></div>
+      <div class="victory-actions">
+        <button class="btn btn-gold btn-full" onclick="goToSetup()">🎯 Nouvelle partie</button>
+        <button class="btn btn-muted btn-sm btn-full" onclick="exportHistory()">📄 Exporter l'historique</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   STATE
+============================================================ */
+let G = null; // Game state
+
+const STORAGE_KEY = 'flechettes_2026_state';
+
+/* ============================================================
+   SOUNDS
+============================================================ */
+let soundEnabled = true;
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+}
+
+function playTone(freq, type, duration, vol = 0.3) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function soundDart()   { playTone(440, 'triangle', 0.12, 0.25); }
+function soundBust()   { playTone(150, 'sawtooth', 0.4, 0.3);  }
+function soundVictory(){ 
+  [523,659,784,1047].forEach((f,i) => setTimeout(()=>playTone(f,'sine',0.4,0.35), i*150));
+}
+
+/* ============================================================
+   MESSAGES
+============================================================ */
+const WIN_MSGS = [
+  "Champion du monde du jardin ! 🌟",
+  "Les triples 20 tremblent encore.",
+  "La cible demande un contrôle antidopage.",
+  "Tu peux signer des autographes.",
+  "Une victoire digne des plus grands.",
+  "Phil Taylor te regardait depuis les étoiles.",
+  "La précision faite homme (ou femme).",
+  "Même les flèches applaudissent.",
+  "MVP de la soirée, aucun débat.",
+  "On parle encore de toi dans 10 ans.",
+  "Le podium te manquait depuis trop longtemps.",
+  "Les stats parlent d'elles-mêmes. Légendaire.",
+  "Tu aurais dû naître à Stoke-on-Trent.",
+  "La fléchette est ta langue maternelle.",
+  "Quelqu'un appelle la BBC Sport ?",
+  "Victoire propre, technique irréprochable.",
+  "Le tableau de liège ne méritait pas ça.",
+  "Redoutable, implacable, champion.",
+  "Le silence dans la salle dit tout.",
+  "On t'entend déjà dans les commentaires sportifs."
+];
+
+const LOSE_MSGS = [
+  "La cible était pourtant devant toi.",
+  "Merci d'essayer de viser la prochaine fois.",
+  "Les murs derrière la cible te remercient.",
+  "La pétanque reste une option sérieuse.",
+  "As-tu envisagé un rendez-vous chez l'ophtalmo ?",
+  "On peut saluer le courage, au moins.",
+  "Prochain arrêt : les cours du soir.",
+  "Le fabricant de flèches aimerait un remboursement.",
+  "Ce score restera confidentiel… ou pas.",
+  "T'as failli. Non, pas vraiment.",
+  "La cible a dû bouger, forcément.",
+  "Le vent était contre toi. Clairement.",
+  "Chaque défaite construit un champion. Tu t'y construis.",
+  "Même le tableau avait de la pitié.",
+  "Belle tentative d'approche du zéro.",
+  "Un jour tu y arriveras. Un jour.",
+  "Le score ne reflète pas ta... euh... personnalité.",
+  "Courage, le titre s'appelle 'participant'.",
+  "Les flèches ont voté : elles recommencent sans toi.",
+  "Spoiler : t'as quand même eu du fun."
+];
+
+function randMsg(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ============================================================
+   FINISH SUGGESTIONS ENGINE
+============================================================ */
+const DART_SEGMENTS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+
+function allValues(bullMode) {
+  // Returns array of {label, pts}
+  const vals = [];
+  DART_SEGMENTS.forEach(n => {
+    vals.push({label: String(n), pts: n});
+    vals.push({label: 'D'+n, pts: n*2});
+    vals.push({label: 'T'+n, pts: n*3});
+  });
+  if (bullMode === '5050') {
+    vals.push({label: 'Bull', pts: 50});
+    vals.push({label: 'SBull', pts: 50});
+  } else {
+    vals.push({label: 'Bull', pts: 25});
+    vals.push({label: 'SBull', pts: 50});
+  }
+  return vals;
+}
+
+function computeFinishes(remaining, bullMode, maxSuggestions = 6) {
+  if (remaining <= 0 || remaining > 170) return [];
+  const vals = allValues(bullMode);
+  const results = [];
+
+  // 1-dart
+  vals.forEach(a => {
+    if (a.pts === remaining) results.push([a.label]);
+  });
+
+  // 2-dart
+  if (results.length < maxSuggestions) {
+    for (let i = 0; i < vals.length && results.length < maxSuggestions * 2; i++) {
+      for (let j = i; j < vals.length; j++) {
+        if (vals[i].pts + vals[j].pts === remaining) {
+          results.push([vals[i].label, vals[j].label]);
+        }
+      }
+    }
+  }
+
+  // 3-dart (limited search)
+  if (results.length < maxSuggestions) {
+    const popular = vals.filter(v => ['T20','T19','T18','T17','T16','T15','D20','D16','20','19','18','Bull','SBull'].includes(v.label));
+    for (let i = 0; i < popular.length && results.length < maxSuggestions * 3; i++) {
+      for (let j = 0; j < vals.length && results.length < maxSuggestions * 3; j++) {
+        for (let k = j; k < vals.length && results.length < maxSuggestions * 3; k++) {
+          if (popular[i].pts + vals[j].pts + vals[k].pts === remaining) {
+            results.push([popular[i].label, vals[j].label, vals[k].label]);
+          }
+        }
+      }
+    }
+  }
+
+  // Deduplicate and limit
+  const seen = new Set();
+  const unique = [];
+  for (const r of results) {
+    const key = [...r].sort().join('|');
+    if (!seen.has(key)) { seen.add(key); unique.push(r); }
+    if (unique.length >= maxSuggestions) break;
+  }
+  return unique;
+}
+
+/* ============================================================
+   DART VALUE PARSER
+============================================================ */
+function parseDart(str, bullMode) {
+  // Returns pts value or null
+  str = str.trim().toUpperCase();
+  if (str === '' || str === '0' || str === 'MISS') return 0;
+
+  // Bullseye
+  if (str === 'SBULL' || str === 'BULL50') return 50;
+  if (str === 'BULL') return bullMode === '5050' ? 50 : 25;
+
+  // T prefix (triple)
+  if (str.startsWith('T')) {
+    const n = parseInt(str.slice(1));
+    if (n >= 1 && n <= 20) return n * 3;
+    return null;
+  }
+  // D prefix (double)
+  if (str.startsWith('D')) {
+    const n = parseInt(str.slice(1));
+    if (n >= 1 && n <= 20) return n * 2;
+    return null;
+  }
+  // Plain number
+  const n = parseInt(str);
+  if (!isNaN(n) && n >= 0 && n <= 20) return n;
+  return null;
+}
+
+/* ============================================================
+   KEYPAD BUILDER
+============================================================ */
+let currentModifier = 1; // 1=simple, 2=double, 3=triple
+let currentSlot = 0;
+let currentArrows = [null, null, null]; // {label, pts}
+
+function selectModifier(m) {
+  currentModifier = m;
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('selected-mod'));
+  document.getElementById('mod-'+m).classList.add('selected-mod');
+}
+
+function buildKeypad() {
+  const kp = document.getElementById('keypad');
+  const kp2 = document.getElementById('keypad2');
+  kp.innerHTML = '';
+  kp2.innerHTML = '';
+
+  // Numbers 1–20
+  for (let n = 1; n <= 20; n++) {
+    const b = document.createElement('button');
+    b.className = 'key';
+    b.textContent = n;
+    b.onclick = () => enterNumber(n);
+    kp.appendChild(b);
+  }
+
+  // Miss
+  const bMiss = document.createElement('button');
+  bMiss.className = 'key key-miss';
+  bMiss.textContent = '✕ Miss';
+  bMiss.onclick = () => enterMiss();
+  kp2.appendChild(bMiss);
+
+  // Bull
+  const bBull = document.createElement('button');
+  bBull.className = 'key key-bull';
+  bBull.textContent = 'Bull (25)';
+  bBull.onclick = () => enterBull(false);
+  kp2.appendChild(bBull);
+
+  // SBull / Bullseye
+  const bSBull = document.createElement('button');
+  bSBull.className = 'key key-bull';
+  bSBull.textContent = 'Bull (50)';
+  bSBull.onclick = () => enterBull(true);
+  kp2.appendChild(bSBull);
+
+  // Validate
+  const bVal = document.createElement('button');
+  bVal.className = 'key key-validate';
+  bVal.textContent = '✓ Valider la volée';
+  bVal.id = 'btnValidate';
+  bVal.onclick = () => validateVolley();
+  kp2.appendChild(bVal);
+}
+
+function enterNumber(n) {
+  if (currentSlot >= 3) return;
+  let label, pts;
+  if (currentModifier === 3) { label = 'T' + n; pts = n * 3; }
+  else if (currentModifier === 2) { label = 'D' + n; pts = n * 2; }
+  else { label = String(n); pts = n; }
+  registerArrow(label, pts);
+}
+
+function enterMiss() {
+  if (currentSlot >= 3) return;
+  registerArrow('0', 0);
+}
+
+function enterBull(isSBull) {
+  if (currentSlot >= 3) return;
+  const bullMode = G.config.bullMode;
+  let label, pts;
+  if (isSBull) {
+    label = 'SBull'; pts = 50;
+  } else {
+    label = 'Bull'; pts = bullMode === '5050' ? 50 : 25;
+  }
+  registerArrow(label, pts);
+}
+
+function registerArrow(label, pts) {
+  if (currentSlot >= 3) return;
+  currentArrows[currentSlot] = { label, pts };
+  updateSlot(currentSlot, label, pts);
+  currentSlot++;
+  updateActiveSlot();
+  soundDart();
+
+  // Auto-validate after 3 arrows
+  if (currentSlot === 3) {
+    setTimeout(validateVolley, 300);
+  }
+}
+
+function clearSlot(idx) {
+  currentArrows[idx] = null;
+  // Also clear slots after
+  for (let i = idx; i < 3; i++) {
+    currentArrows[i] = null;
+    updateSlot(i, null, null);
+  }
+  currentSlot = idx;
+  updateActiveSlot();
+}
+
+function updateSlot(idx, label, pts) {
+  const slot = document.getElementById('slot' + idx);
+  const valEl = slot.querySelector('.arrow-val');
+  const ptsEl = slot.querySelector('.arrow-pts');
+  const clearEl = slot.querySelector('.arrow-clear');
+
+  if (label !== null) {
+    valEl.textContent = label;
+    ptsEl.textContent = pts + ' pts';
+    slot.classList.add('filled');
+    if (!clearEl) {
+      const btn = document.createElement('button');
+      btn.className = 'arrow-clear';
+      btn.textContent = '✕';
+      btn.onclick = () => clearSlot(idx);
+      slot.appendChild(btn);
+    }
+  } else {
+    valEl.textContent = '—';
+    ptsEl.textContent = '';
+    slot.classList.remove('filled');
+    if (clearEl) clearEl.remove();
+  }
+}
+
+function updateActiveSlot() {
+  for (let i = 0; i < 3; i++) {
+    const slot = document.getElementById('slot' + i);
+    slot.classList.toggle('active-slot', i === currentSlot && currentSlot < 3);
+  }
+}
+
+/* ============================================================
+   GAME LOGIC
+============================================================ */
+function startGame() {
+  const p1 = document.getElementById('player1Name').value.trim() || 'Joueur 1';
+  const p2 = document.getElementById('player2Name').value.trim() || 'Joueur 2';
+  const maxTurns = parseInt(document.querySelector('input[name="maxTurns"]:checked').value);
+  const bullMode = document.querySelector('input[name="bullMode"]:checked').value;
+
+  G = {
+    config: { maxTurns, bullMode },
+    players: [
+      { name: p1, score: 301, turnsPlayed: 0 },
+      { name: p2, score: 301, turnsPlayed: 0 }
+    ],
+    currentPlayer: 0,
+    currentTurn: 1,
+    history: [],
+    undoStack: [],
+    over: false
+  };
+
+  saveState();
+  showScreen('game');
+  resetInputState();
+  renderGame();
+}
+
+function resumeGame() {
+  // G already loaded from localStorage
+  showScreen('game');
+  resetInputState();
+  renderGame();
+}
+
+function resetInputState() {
+  currentSlot = 0;
+  currentArrows = [null, null, null];
+  currentModifier = 1;
+  for (let i = 0; i < 3; i++) updateSlot(i, null, null);
+  updateActiveSlot();
+  selectModifier(1);
+  buildKeypad();
+}
+
+function renderGame() {
+  if (!G) return;
+  const { players, currentPlayer, currentTurn, config } = G;
+
+  // Update player cards
+  players.forEach((p, i) => {
+    document.getElementById('pname' + i).textContent = p.name;
+    document.getElementById('pscore' + i).textContent = p.score;
+    document.getElementById('pturns' + i).textContent = `Tours : ${p.turnsPlayed} / ${config.maxTurns}`;
+    document.getElementById('pcard' + i).classList.toggle('active', i === currentPlayer);
+
+    // Finish badge
+    const finDiv = document.getElementById('pfinish' + i);
+    const pcard = document.getElementById('pcard' + i);
+    if (p.score > 0 && p.score <= 100) {
+      finDiv.innerHTML = '<span class="finish-badge">🎯 Finish possible</span>';
+      if (i === currentPlayer) pcard.classList.add('can-finish');
+      else pcard.classList.remove('can-finish');
+    } else {
+      finDiv.innerHTML = '';
+      pcard.classList.remove('can-finish');
+    }
+  });
+
+  // Turn info
+  document.getElementById('turnLabel').textContent = `${currentTurn} / ${config.maxTurns}`;
+  document.getElementById('turnPlayer').textContent = players[currentPlayer].name;
+
+  // Finish suggestions
+  const rem = players[currentPlayer].score;
+  if (rem > 0 && rem <= 100) {
+    const suggestions = computeFinishes(rem, config.bullMode);
+    const sugDiv = document.getElementById('finishSuggestions');
+    const sugList = document.getElementById('suggestionList');
+    if (suggestions.length > 0) {
+      sugDiv.style.display = 'block';
+      sugList.innerHTML = suggestions.map(s => {
+        const text = s.join(' + ');
+        const pts = s.reduce((acc, lbl) => acc + (parseDart(lbl, config.bullMode) || 0), 0);
+        return `<span class="suggestion-pill">${text} = ${pts}</span>`;
+      }).join('');
+    } else {
+      sugDiv.style.display = 'none';
+    }
+  } else {
+    document.getElementById('finishSuggestions').style.display = 'none';
+  }
+
+  renderHistory();
+}
+
+function validateVolley() {
+  if (G.over) return;
+  const arrows = currentArrows.filter(a => a !== null);
+  if (arrows.length === 0) return;
+
+  const player = G.players[G.currentPlayer];
+  const totalPts = arrows.reduce((sum, a) => sum + a.pts, 0);
+  const newScore = player.score - totalPts;
+
+  // Save undo snapshot
+  G.undoStack.push(JSON.parse(JSON.stringify({
+    players: G.players,
+    currentPlayer: G.currentPlayer,
+    currentTurn: G.currentTurn,
+    history: G.history
+  })));
+  if (G.undoStack.length > 20) G.undoStack.shift();
+
+  const label = arrows.map(a => a.label).join(' + ');
+
+  if (newScore < 0) {
+    // BUST
+    const entry = {
+      player: player.name,
+      volley: label,
+      total: totalPts,
+      bust: true,
+      scoreAfter: player.score
+    };
+    G.history.unshift(entry);
+    player.turnsPlayed++;
+    advanceTurn();
+    showBust();
+    soundBust();
+  } else if (newScore === 0) {
+    // WIN
+    player.score = 0;
+    player.turnsPlayed++;
+    const entry = {
+      player: player.name,
+      volley: label,
+      total: totalPts,
+      bust: false,
+      scoreAfter: 0
+    };
+    G.history.unshift(entry);
+    G.over = true;
+    saveState();
+    renderGame();
+    setTimeout(() => showVictory(G.currentPlayer), 500);
+    return;
+  } else {
+    player.score = newScore;
+    player.turnsPlayed++;
+    const entry = {
+      player: player.name,
+      volley: label,
+      total: totalPts,
+      bust: false,
+      scoreAfter: newScore
+    };
+    G.history.unshift(entry);
+    advanceTurn();
+  }
+
+  saveState();
+  renderGame();
+  resetInputState();
+}
+
+function advanceTurn() {
+  const { players, config } = G;
+  const nextPlayer = 1 - G.currentPlayer;
+  
+  // Check if next player also needs their turn counted
+  // Switch player
+  G.currentPlayer = nextPlayer;
+
+  // If we've come back to player 0, increment turn
+  if (G.currentPlayer === 0) {
+    G.currentTurn++;
+  }
+
+  // Check max turns
+  if (G.currentTurn > config.maxTurns) {
+    // Game over by turns
+    G.over = true;
+    const winner = players[0].score <= players[1].score ? 0 : 1;
+    setTimeout(() => showVictory(winner), 300);
+    return;
+  }
+
+  // Also check if this player has used all their turns
+  // (Can happen if player 1 finishes last turn)
+  const p1Turns = players[0].turnsPlayed;
+  const p2Turns = players[1].turnsPlayed;
+  if (p1Turns >= config.maxTurns && p2Turns >= config.maxTurns) {
+    G.over = true;
+    const winner = players[0].score <= players[1].score ? 0 : 1;
+    setTimeout(() => showVictory(winner), 300);
+  }
+}
+
+function undoLast() {
+  if (!G.undoStack || G.undoStack.length === 0) {
+    alert('Aucune volée à annuler.');
+    return;
+  }
+  const snap = G.undoStack.pop();
+  G.players = snap.players;
+  G.currentPlayer = snap.currentPlayer;
+  G.currentTurn = snap.currentTurn;
+  G.history = snap.history;
+  G.over = false;
+  saveState();
+  renderGame();
+  resetInputState();
+}
+
+/* ============================================================
+   BUST ANIMATION
+============================================================ */
+function showBust() {
+  const ov = document.getElementById('bustOverlay');
+  ov.classList.add('show');
+  setTimeout(() => ov.classList.remove('show'), 800);
+}
+
+/* ============================================================
+   HISTORY RENDER
+============================================================ */
+function renderHistory() {
+  const body = document.getElementById('historyBody');
+  if (!G || !G.history.length) {
+    body.innerHTML = '<div class="history-entry text-muted">Aucune volée jouée.</div>';
+    return;
+  }
+  body.innerHTML = G.history.map(e => {
+    if (e.bust) {
+      return `<div class="history-entry">
+        <span class="he-player">${e.player}</span> : 
+        <span class="he-volley">${e.volley}</span> = 
+        <span class="he-bust">BUST</span>
+      </div>`;
+    }
+    return `<div class="history-entry">
+      <span class="he-player">${e.player}</span> : 
+      <span class="he-volley">${e.volley}</span> = 
+      <span class="he-score">${e.total}</span>
+      <span class="text-muted"> (reste ${e.scoreAfter})</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleHistory() {
+  const body = document.getElementById('historyBody');
+  const icon = document.getElementById('histIcon');
+  const open = body.classList.toggle('open');
+  icon.classList.toggle('open', open);
+}
+
+/* ============================================================
+   VICTORY SCREEN
+============================================================ */
+function showVictory(winnerIdx) {
+  if (!G) return;
+  const winner = G.players[winnerIdx];
+  const loser  = G.players[1 - winnerIdx];
+
+  document.getElementById('victoryName').textContent = winner.name;
+  document.getElementById('victoryScore').textContent = winner.score;
+  document.getElementById('victoryTurns').textContent = winner.turnsPlayed;
+  document.getElementById('victoryMsg').textContent = randMsg(WIN_MSGS);
+  document.getElementById('loserMsg').textContent = loser.name + ' : ' + randMsg(LOSE_MSGS);
+
+  localStorage.removeItem(STORAGE_KEY); // Clear save on victory
+  showScreen('victory');
+  soundVictory();
+  launchConfetti();
+}
+
+/* ============================================================
+   CONFETTI
+============================================================ */
+let confettiAnim = null;
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+
+  const COLORS = ['#d4a017','#f0c040','#e74c3c','#3498db','#2ecc71','#9b59b6','#ffffff'];
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    w: 8 + Math.random() * 8,
+    h: 4 + Math.random() * 6,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    vx: (Math.random() - 0.5) * 3,
+    vy: 2 + Math.random() * 4,
+    angle: Math.random() * Math.PI * 2,
+    va: (Math.random() - 0.5) * 0.2
+  }));
+
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.angle += p.va;
+      if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frames++;
+    if (frames < 240) confettiAnim = requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  confettiAnim = requestAnimationFrame(draw);
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function goToSetup() {
+  G = null;
+  localStorage.removeItem(STORAGE_KEY);
+  showScreen('setup');
+  checkResumeAvailable();
+}
+
+function confirmNewGame() {
+  if (confirm('Abandonner la partie en cours et revenir à l\'accueil ?')) {
+    goToSetup();
+  }
+}
+
+/* ============================================================
+   PERSISTENCE
+============================================================ */
+function saveState() {
+  if (!G || G.over) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(G)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function checkResumeAvailable() {
+  const saved = loadState();
+  const banner = document.getElementById('resumeBanner');
+  const btn    = document.getElementById('resumeBtn');
+  if (saved && !saved.over) {
+    G = saved;
+    banner.style.display = 'block';
+    btn.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+    btn.style.display = 'none';
+  }
+}
+
+/* ============================================================
+   EXPORT
+============================================================ */
+function exportHistory() {
+  if (!G) { alert('Pas de partie à exporter.'); return; }
+  const lines = [
+    '=== Compétition Fléchette 2026 ===',
+    `${G.players[0].name} vs ${G.players[1].name}`,
+    `Mode : ${G.config.maxTurns} tours · Bullseye : ${G.config.bullMode}`,
+    '',
+    '--- Historique ---',
+    ...([...G.history].reverse().map(e => {
+      if (e.bust) return `${e.player} : ${e.volley} → BUST`;
+      return `${e.player} : ${e.volley} = ${e.total} (reste ${e.scoreAfter})`;
+    })),
+    '',
+    '--- Scores finaux ---',
+    `${G.players[0].name} : ${G.players[0].score} (${G.players[0].turnsPlayed} tours)`,
+    `${G.players[1].name} : ${G.players[1].score} (${G.players[1].turnsPlayed} tours)`,
+  ];
+
+  const blob = new Blob([lines.join('\n')], {type: 'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'flechettes_historique.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+window.addEventListener('load', () => {
+  checkResumeAvailable();
+  showScreen('setup');
+  buildKeypad(); // Pre-build for first game
+});
+
+// Handle resize for confetti canvas
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
